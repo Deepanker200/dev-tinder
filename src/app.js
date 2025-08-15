@@ -1,25 +1,35 @@
 const express = require('express');
 const connectDB = require("./config/database")
-const User=require('./models/user');
+const User = require('./models/user');
 
 //Creating a new web server
 const app = express();
 
-app.post("/signup",async(req,res)=>{
-  const userObj={
-    firstName:"Virat",
-    lastName:"Kohli",
-    emailId:"virat@gmail.com",
-    password:"cheeku"
-  }
+//Using this so that we can store data in collections~ Convert JSON to JS object/ BSON
+app.use(express.json());
 
-  //Creating a new instance of User Model
-  const user=new User(userObj);
-  try{
+app.post("/signup", async (req, res) => {
+
+
+  // const userObj = {
+  //   firstName: "MS",
+  //   lastName: "Dhoni",
+  //   emailId: "msdhoni@gmail.com",
+  //   password: "mahi"
+  // }
+  // //Creating a new instance of User Model
+  // const user=new User(userObj);
+
+
+  console.log(req.body);
+  //When we use express.json and sending data from POST method
+  const user = new User(req.body);
+  
+  try {
     await user.save();
     res.send("User added successfully")
-  }catch(err){
-    res.status(400).send("Error saving the user"+ err.message)
+  } catch (err) {
+    res.status(400).send("Error saving the user" + err.message)
   }
 })
 
