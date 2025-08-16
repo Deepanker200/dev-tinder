@@ -29,7 +29,7 @@ app.post("/signup", async (req, res) => {
     await user.save();
     res.send("User added successfully")
   } catch (err) {
-    res.status(400).send("Error saving the user" + err.message)
+    res.status(400).send("Error saving the user " + err.message)
   }
 })
 
@@ -84,11 +84,20 @@ app.patch("/user", async (req, res) => {
 
   try {
     // const user=await User.findByIdAndUpdate({ _id: userId }, data,{returnDocument:"before"})
-    const user=await User.findOneAndUpdate({ emailId: emailId }, data,{returnDocument:"before"})
+    const user = await User.findOneAndUpdate({ emailId: emailId }, data,
+      {
+        returnDocument: "before",
+        runValidators: true
+      })
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
     console.log(user);
-    res.send("User Updated Successfully")
+    res.send("User Updated Successfully");
   } catch (err) {
-    res.status(400).send("Something went wrong")
+    res.status(400).send("Update FAILED: " + err.message)
   }
 })
 
