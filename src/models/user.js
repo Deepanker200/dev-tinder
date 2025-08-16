@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const userSchema = new mongoose.Schema(
     {
@@ -17,15 +18,20 @@ const userSchema = new mongoose.Schema(
             required: true,
             unique: true,
             trim: true,
-            validate: {
-                validator: function (v) {
-                    return v !== null && v !== "";   // disallow null or empty
-                },
+            validate(value) {
+                if (!validator.isEmail(value)) {
+                    throw new Error('Invalid Email address: ' + value);
+                }
             }
         },
         password: {
             type: String,
-            required: true
+            required: true,
+            validate(value){
+                if(!validator.isStrongPassword(value)){
+                    throw new Error('Password must be at least 8 characters long, and must contain at least')
+                }
+            }
         },
         age: {
             type: Number,
@@ -42,7 +48,12 @@ const userSchema = new mongoose.Schema(
         },
         photoUrl: {
             type: String,
-            default: "https://static.vecteezy.com/system/resources/thumbnails/000/439/863/small_2x/Basic_Ui__28186_29.jpg"
+            default: "https://static.vecteezy.com/system/resources/thumbnails/000/439/863/small_2x/Basic_Ui__28186_29.jpg",
+            validate(value) {
+                if (!validator.isURL(value)) {
+                    throw new Error('Invalid URL: ' + value);
+                }
+            }
         },
         about: {
             type: String,
@@ -50,7 +61,7 @@ const userSchema = new mongoose.Schema(
         },
         skills: {
             // type:Array
-            type: [String]
+            type: [String],
         }
     },
     {

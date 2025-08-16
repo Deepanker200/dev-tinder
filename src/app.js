@@ -76,23 +76,45 @@ app.delete("/user", async (req, res) => {
 })
 
 //Updating data in database
-app.patch("/user", async (req, res) => {
-  // const userId = req.body.userId;
-  const emailId = req.body.emailId;
+app.patch("/user/:userId", async (req, res) => {
+  const userId = req.params?.userId;
+  // const emailId = req.body.emailId;
   const data = req.body;
-  // console.log(data);
 
   try {
-    // const user=await User.findByIdAndUpdate({ _id: userId }, data,{returnDocument:"before"})
-    const user = await User.findOneAndUpdate({ emailId: emailId }, data,
+
+    const ALLOWED_UPDATES = [
+      "photoUrl", "about", "gender", "age", "skills","password"
+    ]
+    // console.log(data);
+
+    const isUpdateAllowed = Object.keys(data).every(k =>
+      ALLOWED_UPDATES.includes(k)
+    );
+
+    if (!isUpdateAllowed) {
+     throw new Error("Update not allowed");
+    }
+
+    if(data?.skills?.length>10){
+      throw new Error("Skills cannot be more than 10")
+    }
+
+    const user = await User.findByIdAndUpdate({ _id: userId }, data,
       {
         returnDocument: "before",
         runValidators: true
       })
+    // const user = await User.findOneAndUpdate({ emailId: emailId }, data,
+    // {
+    //   returnDocument: "before",
+    //   runValidators: true
+    // })
 
-    if (!user) {
-      return res.status(404).send("User not found");
-    }
+    //Special case for null(email-> probably)
+    // if (!user) {
+    //   return res.status(404).send("User not found");
+    // }
 
     console.log(user);
     res.send("User Updated Successfully");
