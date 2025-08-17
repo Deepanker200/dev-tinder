@@ -16,6 +16,7 @@
     "dev": "nodemon src/app.js"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "express": "^4.19.2",
     "mongoose": "^8.17.1",
     "nodemon": "^3.1.10",

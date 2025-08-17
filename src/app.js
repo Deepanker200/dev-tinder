@@ -1,6 +1,8 @@
 const express = require('express');
 const connectDB = require("./config/database")
 const User = require('./models/user');
+const { validateSignUpData } = require("./utils/validation")
+const brcrypt = require('bcrypt');
 
 //Creating a new web server
 const app = express();
@@ -9,30 +11,47 @@ const app = express();
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
-
-
-  // const userObj = {
-  //   firstName: "MS",
-  //   lastName: "Dhoni",
-  //   emailId: "msdhoni@gmail.com",
-  //   password: "mahi"
-  // }
-  // //Creating a new instance of User Model
-  // const user=new User(userObj);
-
-
-  // console.log(req.body);
-  //When we use express.json and sending data from POST method
-  const user = new User(req.body);
-
   try {
+    //Validation of data
+    validateSignUpData(req);
+
+    const { firstName, lastName, emailId, password } = req.body;
+
+    //Encrypt the password
+    const passwordHash = await brcrypt.hash(password, 10)
+    console.log(passwordHash);
+
+    //When we use express.json and sending data from POST method
+    //Creating a new instance of the User model
+    const user = new User({
+      firstName, lastName, emailId, password: passwordHash
+    });
+
     await user.save();
     res.send("User added successfully")
   } catch (err) {
-    res.status(400).send("Error saving the user " + err.message)
+    res.status(400).send("ERROR : " + err.message)
   }
 })
 
+app.post("/login", async (req, res) => {
+  try {
+    const { emailId, password } = req.body;
+    const user=await User.findOne({emailId:emailId});
+    if(!user){
+      throw new Error("Invalid credentials")
+    }
+
+    const isPasswordValid = await brcrypt.compare(password,user.password)
+    if(isPasswordValid){
+      res.send("Login Successfully")
+    }else{
+      throw new Error("Invalid credentials")
+    }
+  } catch (err) {
+    res.status(400).send("ERROR : " + err.message)
+  }
+})
 
 //Get user by email
 app.get("/user", async (req, res) => {
@@ -84,7 +103,7 @@ app.patch("/user/:userId", async (req, res) => {
   try {
 
     const ALLOWED_UPDATES = [
-      "photoUrl", "about", "gender", "age", "skills","password"
+      "photoUrl", "about", "gender", "age", "skills", "password"
     ]
     // console.log(data);
 
@@ -93,10 +112,10 @@ app.patch("/user/:userId", async (req, res) => {
     );
 
     if (!isUpdateAllowed) {
-     throw new Error("Update not allowed");
+      throw new Error("Update not allowed");
     }
 
-    if(data?.skills?.length>10){
+    if (data?.skills?.length > 10) {
       throw new Error("Skills cannot be more than 10")
     }
 
