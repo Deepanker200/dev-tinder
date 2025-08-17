@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const jwt = require("jsonwebtoken");
+const bcrypt = require('bcrypt');
+
 
 const userSchema = new mongoose.Schema(
     {
@@ -27,8 +30,8 @@ const userSchema = new mongoose.Schema(
         password: {
             type: String,
             required: true,
-            validate(value){
-                if(!validator.isStrongPassword(value)){
+            validate(value) {
+                if (!validator.isStrongPassword(value)) {
                     throw new Error('Password must be at least 8 characters long, and must contain at least')
                 }
             }
@@ -68,6 +71,28 @@ const userSchema = new mongoose.Schema(
         timestamps: true
     }
 )
+
+userSchema.methods.getJWT = async function () {
+    const user = this;
+
+    const token = await jwt.sign({ _id: user._id }, "DEV@Tinder$790",
+        {
+            expiresIn: "7d"     //from jsonwebtoken doc
+        }
+    );
+
+    return token;
+}
+
+userSchema.methods.validatePassword = async function (passwordInputByUser) {
+    const user = this;
+    const passwordHash = user.password;     //Connected with DB field
+    const isPasswordValid = await bcrypt.compare(
+        passwordInputByUser,
+        passwordHash
+    );
+    return isPasswordValid;
+}
 
 //This one is also correct
 // const User=mongoose.model("User",userSchema)
