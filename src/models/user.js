@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema(
         firstName: {
             type: String,
             required: true,
+            // index:true,      //for indexing- it is normal indexing
             minLength: 4,
             maxLength: 50
         },
