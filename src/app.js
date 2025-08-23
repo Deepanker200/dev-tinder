@@ -11,12 +11,14 @@ app.use(express.json());
 app.use(cookieParser());
 
 const authRouter=require("./routes/auth")
-const proifleRouter=require("./routes/profile")
+const profileRouter=require("./routes/profile")
 const requestRouter=require("./routes/request")
+const userRouter=require("./routes/user")
 
 app.use("/",authRouter);
-app.use("/",proifleRouter);
+app.use("/",profileRouter);
 app.use("/",requestRouter);
+app.use("/",userRouter);
 
 
 connectDB()
