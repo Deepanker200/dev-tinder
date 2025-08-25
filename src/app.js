@@ -2,12 +2,18 @@ const express = require('express');
 const connectDB = require("./config/database")
 const User = require('./models/user');
 const cookieParser = require("cookie-parser")
+const cors = require("cors")
 
 //Creating a new web server
 const app = express();
 
+app.use(cors({
+  origin:"http://localhost:5173",
+  credentials:true
+}))
 //Using this so that we can store data in collections~ Convert JSON to JS object/ BSON
 app.use(express.json());
+
 app.use(cookieParser());
 
 const authRouter=require("./routes/auth")
