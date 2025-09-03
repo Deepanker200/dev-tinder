@@ -61,7 +61,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
         const loggedInUser = req.user;
 
         const page = parseInt(req.query.page);
-        let limit = parseInt(req.query.limit) || 10;
+        let limit = parseInt(req.query.limit) || 10;        //Increasing this will increase the number of users to be shown to the user!
         limit = limit > 50 ? 50 : limit;
         const skip = (page - 1) * limit;
 
