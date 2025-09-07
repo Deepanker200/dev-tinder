@@ -54,6 +54,13 @@ const userSchema = new mongoose.Schema(
             //     }
             // }
         },
+        isPremium:{
+            type:Boolean,
+            default:false
+        },
+        membershipType:{
+            type:String
+        },
         photoUrl: {
             type: String,
             default: "https://static.vecteezy.com/system/resources/thumbnails/000/439/863/small_2x/Basic_Ui__28186_29.jpg",
