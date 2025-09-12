@@ -2,7 +2,7 @@ const socket = require("socket.io");
 const crypto = require("crypto");
 const { Chat } = require("../models/chat");
 const { timeStamp } = require("console");
-const { ConnectionRequest } = require("../models/connectionRequest")
+const ConnectionRequest = require("../models/connectionRequest")
 
 const getSecretRoomId = (userId, targetUserId) => {
     return crypto
@@ -39,7 +39,7 @@ const initializeSocket = (server) => {
                 const roomId = getSecretRoomId(userId, targetUserId);
                 console.log(firstName + " " + text);
 
-                //Check if the userId and tarfetUserId are friends
+                //Check if the userId and targetUserId are friends
                 ConnectionRequest.findOne({ fromUserId: userId, toUserId: targetUserId, status: "accepted" })
 
                 let chat = await Chat.findOne({
