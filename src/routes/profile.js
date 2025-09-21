@@ -5,7 +5,7 @@ const { validateProfileEditData, validateSignUpData } = require("../utils/valida
 const bcrypt = require('bcrypt');
 
 
-profileRouter.get("/profile/view", userAuth, async (req, res) => {
+profileRouter.get("/view", userAuth, async (req, res) => {
   try {
     const user = req.user;
     // console.log(cookies);
@@ -17,7 +17,7 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
 })
 
 
-profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
+profileRouter.patch("/edit", userAuth, async (req, res) => {
   try {
     if (!validateProfileEditData(req)) {
       throw new Error("Invalid Edit Request")
@@ -39,7 +39,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   }
 })
 
-profileRouter.patch('/profile/password', userAuth, async (req, res) => {
+profileRouter.patch('/password', userAuth, async (req, res) => {
   try {
     const { password } = req.user;
     const { oldPassword, newPassword } = req.body
