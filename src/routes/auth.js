@@ -50,16 +50,12 @@ authRouter.post("/login", async (req, res) => {
             // console.log(token);
 
 
-            const requestCount = await ConnectionRequestModel.countDocuments({
-                toUserId: user._id,
-                status: "interested"
-            });
 
             //Add the token to cookie and send the response back to the user
             res.cookie("token", token, {
                 expires: new Date(Date.now() + 8 * 3600000)
             });
-            res.send({user,  requests: requestCount})
+            res.send(user)
         } else {
             throw new Error("Invalid credentials")
         }
