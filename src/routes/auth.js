@@ -3,6 +3,7 @@ const authRouter = express.Router();
 const { validateSignUpData } = require("../utils/validation")
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const ConnectionRequestModel = require('../models/connectionRequest');
 
 authRouter.post("/signup", async (req, res) => {
     try {
@@ -48,11 +49,17 @@ authRouter.post("/login", async (req, res) => {
             const token = await user.getJWT();
             // console.log(token);
 
+
+            const requestCount = await ConnectionRequestModel.countDocuments({
+                toUserId: user._id,
+                status: "interested"
+            });
+
             //Add the token to cookie and send the response back to the user
             res.cookie("token", token, {
                 expires: new Date(Date.now() + 8 * 3600000)
             });
-            res.send(user)
+            res.send({user,  requests: requestCount})
         } else {
             throw new Error("Invalid credentials")
         }
