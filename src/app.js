@@ -4,7 +4,7 @@ const User = require('./models/user');
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config();
-const http= require("http");
+const http = require("http");
 
 require("./utils/cronjob");
 
@@ -12,31 +12,34 @@ require("./utils/cronjob");
 const app = express();
 
 app.use(cors({
-  origin:"http://localhost:5173",
-  credentials:true
+  origin: "http://localhost:5173",
+  credentials: true,
+  // methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],  // ✅ ADD THIS
+  allowedHeaders: ["Content-Type"]  // ✅ ADD THIS
 }))
 //Using this so that we can store data in collections~ Convert JSON to JS object/ BSON
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));  // ✅ ADD THIS for FormData
 
 app.use(cookieParser());
 
-const authRouter=require("./routes/auth")
-const profileRouter=require("./routes/profile")
-const requestRouter=require("./routes/request")
-const userRouter=require("./routes/user");
+const authRouter = require("./routes/auth")
+const profileRouter = require("./routes/profile")
+const requestRouter = require("./routes/request")
+const userRouter = require("./routes/user");
 const paymentRouter = require('./routes/payment');
 const chatRouter = require('./routes/chat');
 const initializeSocket = require('./utils/socket');
 
-app.use("/",authRouter);
-app.use("/profile",profileRouter);
-app.use("/",requestRouter);
-app.use("/",userRouter);
-app.use("/",paymentRouter);
-app.use("/",chatRouter);
+app.use("/", authRouter);
+app.use("/profile", profileRouter);
+app.use("/", requestRouter);
+app.use("/", userRouter);
+app.use("/", paymentRouter);
+app.use("/", chatRouter);
 
 //Socket IO
-const server=http.createServer(app);
+const server = http.createServer(app);
 initializeSocket(server)
 
 connectDB()

@@ -3,6 +3,7 @@ const profileRouter = express.Router();
 const { userAuth } = require("../middlewares/auth")
 const { validateProfileEditData, validateSignUpData } = require("../utils/validation")
 const bcrypt = require('bcrypt');
+const upload = require('../middlewares/multer');
 
 
 profileRouter.get("/view", userAuth, async (req, res) => {
@@ -17,24 +18,43 @@ profileRouter.get("/view", userAuth, async (req, res) => {
 })
 
 
-profileRouter.patch("/edit", userAuth, async (req, res) => {
+profileRouter.patch("/edit", userAuth, upload.single('photo'), async (req, res) => {
   try {
+    console.log("=== FILE UPLOAD DEBUG ===");
+    console.log("req.file exists?", !!req.file);
+    console.log("req.file:", req.file);
+    console.log("req.body:", req.body);
+    
     if (!validateProfileEditData(req)) {
       throw new Error("Invalid Edit Request")
     };
 
     const loggedInUser = req.user;
 
-    Object.keys(req.body).forEach((key) => (loggedInUser[key] = req.body[key]))
+    if (req.file) {
+      console.log("✅ File received! Setting photoUrl to:", req.file.path);
+      loggedInUser.photoUrl = req.file.path;
+    } else {
+      console.log("❌ No file received!");
+    }
+
+    Object.keys(req.body).forEach((key) => {
+      if (key !== 'photo') {
+        loggedInUser[key] = req.body[key];
+      }
+    });
+    
     await loggedInUser.save();
 
-    // res.send(`${loggedInUser.firstName}, your profile updated successfully`)
+    console.log("Saved photoUrl:", loggedInUser.photoUrl);
+
     res.json({
       message: `${loggedInUser.firstName}, your profile updated successfully`,
       data: loggedInUser,
     })
 
   } catch (err) {
+    console.log("ERROR:", err);
     return res.status(400).send("ERROR: " + err.message)
   }
 })
