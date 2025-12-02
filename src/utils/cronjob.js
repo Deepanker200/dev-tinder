@@ -8,8 +8,8 @@ cron.schedule("0 8 * * *", async () => {
 
     try {
 
-        const yesterday = subDays(new Date(), 0);        //on same day
-        // const yesterday = subDays(new Date(), 1);
+        // const yesterday = subDays(new Date(), 0);        //on same day
+        const yesterday = subDays(new Date(), 1);
 
         const yesterdayStart = startOfDay(yesterday);
         const yesterdayEnd = endOfDay(yesterday);
