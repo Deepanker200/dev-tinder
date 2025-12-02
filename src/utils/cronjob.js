@@ -8,8 +8,8 @@ cron.schedule("0 8 * * *", async () => {
 
     try {
 
-        // const yesterday = subDays(new Date(), 0);        //on same day
-        const yesterday = subDays(new Date(), 1);
+        const yesterday = subDays(new Date(), 0);        //on same day
+        // const yesterday = subDays(new Date(), 1);
 
         const yesterdayStart = startOfDay(yesterday);
         const yesterdayEnd = endOfDay(yesterday);
@@ -21,6 +21,9 @@ cron.schedule("0 8 * * *", async () => {
                 $lt: yesterdayEnd
             }
         }).populate("fromUserId toUserId");
+
+
+        // console.log(pendingRequests[0]);
 
         // Fetching email to send data
         const listOfEmails = [...new Set(pendingRequests.map(req => req.toUserId.emailId))] //converting it into array
