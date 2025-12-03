@@ -24,7 +24,7 @@ cron.schedule("* * * * *", async () => {
         }).populate("fromUserId toUserId");
 
 
-        // console.log(pendingRequests[0]);
+        console.log(pendingRequests[0]);
 
         // Fetching email to send data
         const listOfEmails = [...new Set(pendingRequests.map(req => req.toUserId.emailId))] //converting it into array
