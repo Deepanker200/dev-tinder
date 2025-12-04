@@ -3,7 +3,7 @@ const { subDays, startOfDay, endOfDay } = require('date-fns');
 const ConnectionRequestModel = require('../models/connectionRequest');
 const sendEmail = require("../utils/sendEmail")
 
-cron.schedule("* * * * *", async () => {
+cron.schedule("* 8 * * *", async () => {
     //Send emails to all people who got requests the previous day
     console.log("🔔 Cron job started at:", new Date());
 
@@ -24,7 +24,7 @@ cron.schedule("* * * * *", async () => {
         }).populate("fromUserId toUserId");
 
 
-        console.log(pendingRequests[0]);
+        console.log("1st email: ",pendingRequests[0]);
 
         // Fetching email to send data
         const listOfEmails = [...new Set(pendingRequests.map(req => req.toUserId.emailId))] //converting it into array
